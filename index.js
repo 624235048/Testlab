@@ -34,19 +34,32 @@ app.get('/books',  function (req, res)  {
 					}, 
 				function (errorObject) {
 					res.send("The read failed: " + errorObject.code);
-				});
-  
-});
+				}); 
+
+
+			});
+
 //rectandgle (post)
-//app.post('/rectandgle',  function (req, res){
-	//res.setHeader('Content-Type', 'application/json');
+app.post('/rectandgle',  function (req, res){
+	res.setHeader('Content-Type', 'application/json');
 
-	//var side1 = req.body.side1;
-	//var side2 = req.body.side2;
+	var side1 = req.body.side1;
+	var side2 = req.body.side2;
 
-	//res.send('{ "result ": ' + (side1*side2) +'}');
+	res.send('{ "result ": ' + (side1*side2) +'}');
 
-	
+});
+
+//circle (post)
+app.post('/circle',  function (req, res){
+	res.setHeader('Content-Type', 'application/json');
+
+	var radius = req.body.radius1;
+
+res.send('{ "result ": ' + (3.14*radius*radius) +'}');
+
+});
+
 //plus (post)
 app.post('/plus',  function (req, res){
 	res.setHeader('Content-Type', 'application/json');
@@ -116,16 +129,16 @@ app.get('/book/:bookid',  function (req, res)  {
 					});
 });
 
-app.get('/student/:studentid',  function (req, res)  {  
+app.get('/student/:studentId',  function (req, res)  {  
   	
 	//Code Here
 	res.setHeader('Content-Type', 'application/json');
-	var studentid = Number(req.params.studentid);
-
+	var studentId = req.params.studentId;
+	
 	var booksReference = db.ref("students");
 
 	//Attach an asynchronous callback to read the data
-	booksReference.orderByChild("studentid").equalTo(studentid).on("child_added", 
+	booksReference.orderByChild("studentId").equalTo(studentId).on("child_added", 
 				function(snapshot) {					
 					res.json(snapshot.val());
 					booksReference.off("value");
@@ -134,6 +147,8 @@ app.get('/student/:studentid',  function (req, res)  {
 					res.send("The read failed: " + errorObject.code);
 				});
 });
+
+
 
 app.delete('/book/:bookid',  function (req, res)  {  
   	
