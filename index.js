@@ -19,12 +19,51 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
-
+//books get
 app.get('/books',  function (req, res)  {  
 
 	res.setHeader('Content-Type', 'application/json');
 
 	var booksReference = db.ref("books");
+
+	//Attach an asynchronous callback to read the data
+	booksReference.on("value", 
+				function(snapshot) {					
+					res.json(snapshot.val());
+					booksReference.off("value");
+					}, 
+				function (errorObject) {
+					res.send("The read failed: " + errorObject.code);
+				});
+  
+});
+//rectandgle (post)
+//app.post('/rectandgle',  function (req, res){
+	//res.setHeader('Content-Type', 'application/json');
+
+	//var side1 = req.body.side1;
+	//var side2 = req.body.side2;
+
+	//res.send('{ "result ": ' + (side1*side2) +'}');
+
+	
+//plus (post)
+app.post('/plus',  function (req, res){
+	res.setHeader('Content-Type', 'application/json');
+	
+	var num1 = req.body.num1;
+	var num2 = req.body.num2;
+
+	res.send('{ "result ": ' + (num1+num2) +'}');
+
+});
+
+//students (get)
+app.get('/students',  function (req, res)  {  
+
+	res.setHeader('Content-Type', 'application/json');
+
+	var booksReference = db.ref("students");
 
 	//Attach an asynchronous callback to read the data
 	booksReference.on("value", 
@@ -61,7 +100,39 @@ app.get('/topsellers',  function (req, res)  {
 app.get('/book/:bookid',  function (req, res)  {  
   	
 		//Code Here
+		res.setHeader('Content-Type', 'application/json');
+		var bookid = Number(req.params.bookid);
 
+		var booksReference = db.ref("books");
+
+		//Attach an asynchronous callback to read the data
+		booksReference.orderByChild("bookid").equalTo(bookid).on("child_added", 
+					function(snapshot) {					
+						res.json(snapshot.val());
+						booksReference.off("value");
+						}, 
+					function (errorObject) {
+						res.send("The read failed: " + errorObject.code);
+					});
+});
+
+app.get('/student/:studentid',  function (req, res)  {  
+  	
+	//Code Here
+	res.setHeader('Content-Type', 'application/json');
+	var studentid = Number(req.params.studentid);
+
+	var booksReference = db.ref("students");
+
+	//Attach an asynchronous callback to read the data
+	booksReference.orderByChild("studentid").equalTo(studentid).on("child_added", 
+				function(snapshot) {					
+					res.json(snapshot.val());
+					booksReference.off("value");
+					}, 
+				function (errorObject) {
+					res.send("The read failed: " + errorObject.code);
+				});
 });
 
 app.delete('/book/:bookid',  function (req, res)  {  
